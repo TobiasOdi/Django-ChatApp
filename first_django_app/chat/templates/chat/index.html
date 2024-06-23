@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% block content %} 
+<script>
+  async function sendMessage() {
+    let date = formatDate();
+    let fd = new FormData();
+    let token = '{{ csrf_token }}';
+    fd.append('textmessage', messagefield.value);
+    fd.append('csrfmiddlewaretoken', token);
+    try {
+      messageContainer.innerHTML += `
+        <div id="deleteMessage">
+          <span class="color-grey">[${date}]</span> {{ request.user.first_name }}:
+          <i class="color-grey">${messagefield.value}</i>
+        </div>
+      `;
+      let response = await fetch('', {
+        method: 'POST',
+        body: fd
+      });
+      console.log(response);
+      let json = response.json();
+      console.log(json);
+      document.getElementById('deleteMessage').remove();
+      messageContainer.innerHTML += `
+        <div>
+          <span class="color-grey">[${date}]</span> {{ request.user.first_name }}:
+          <i>${messagefield.value}</i>
+        </div>
+      `;
+      console.log('Sucess!');
+
+    } catch(error) {
+      console.log('An error occured', error);
+    }
+  }
+
+  function formatDate() {
+    const day = new Date().toLocaleDateString('en-US', { day: 'numeric'});
+    const month = new Date().toLocaleDateString('en-US', { month: 'long'});
+    const year = new Date().toLocaleDateString('en-US', { year: 'numeric'});
+    return  `${month} ${day}, ${year}`;
+  }
+</script>
+
+<!-- Always shows a header, even in smaller screens. -->
+{% if request.user.is_authenticated %} 
+
+<div id="messageContainer">
+  {% for message in messages %}
+
+  <div>
+    <span class="color-grey">[{{message.created_at}}]</span> {{ message.author }}:
+    <i>{{ message.text }}</i>
+  </div>
+  {% endfor %}
+</div>
+
+<form onsubmit="sendMessage(); return false;" id="addMessage">
+  {% csrf_token %}
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" name="textmessage"  type="text" id="messagefield"/>
+    <label class="mdl-textfield__label" for="sample3">Text...</label>
+  </div>
+
+  <!-- Accent-colored raised button with ripple -->
+  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+    Send
+  </button>
+</form>
+
+{% else %}
+<h1>Nicht eingeloggt</h1>
+<p>Du bist aktuell nicht eingeloggt. Bitte logge dich ein.</p>
+<br />
+Bitte klick <a href="/login">hier</a>
+
+{% endif %}
+
+{% endblock %}
+
+
+
+
+<!-- <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+ -->
+<!-- Title -->
+<!--       <span class="mdl-layout-title">
+        
+        {% if request.user.is_authenticated %}
+          Welcome, {{ username }}!
+        {% else %}
+          Welcome! Please log in!
+        {% endif %}  
+      
+        </span>
+ -->
+<!-- Add spacer, to align navigation to the right -->
+<!--       <div class="mdl-layout-spacer"></div>
+ -->
+<!-- Navigation. We hide it in small screens. -->
+<!--       <nav class="mdl-navigation mdl-layout--large-screen-only">
+        <a class="mdl-navigation__link" href="">Link</a>
+        <a class="mdl-navigation__link" href="">Link</a>
+        <a class="mdl-navigation__link" href="">Link</a>
+        <a class="mdl-navigation__link" href="">Link</a>
+      </nav>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">Chatroom</span>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="">Link</a>
+      <a class="mdl-navigation__link" href="">Link</a>
+      <a class="mdl-navigation__link" href="">Link</a>
+      <a class="mdl-navigation__link" href="">Link</a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content">
+    <div class="page-content">
+
+      {% if request.user.is_authenticated %}
+  
+      {% for message in messages %}
+      <div>
+        <span class="color-grey">[{{message.created_at}}]</span> {{ message.author }}: <i>{{ message.text }}</i> 
+      </div>
+      {% endfor %}
+
+
+      <form action="/chat/" method="post" >
+        {% csrf_token %}
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" name="textmessage" type="text" id="sample3" />
+          <label class="mdl-textfield__label" for="sample3">Text...</label>
+        </div>
+ -->
+<!-- Accent-colored raised button with ripple -->
+<!--         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+          Send
+        </button>
+      </form>
+
+      {% else %}
+      <h1>Nicht eingeloggt</h1>
+      <p>
+          Du bist aktuell nicht eingeloggt. Bitte logge dich ein.</p><br>
+          Bitte klick <a href="/login">hier</a>
+
+      {% endif %}
+
+    </div>
+  </main>
+</div>
+ -->
+
+
+ 
