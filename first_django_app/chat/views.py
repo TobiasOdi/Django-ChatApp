@@ -10,7 +10,6 @@ from django.core import serializers
 # Create your views here.
 @login_required(login_url='/login/')
 def index(request):
-    print('Funktion wird ausgeführt')
     if request.method == 'POST':
         print("Received data" + request.POST['textmessage'])
         myChat = Chat.objects.get(id=1)
@@ -21,21 +20,18 @@ def index(request):
     return render(request, 'chat/index.html', {'messages': chatMessages})
 
 def loginView(request):
-    #loading
-    loading = False
-    redirect = request.GET.get('next')
+    wrongPassword = False
+    #redirect = request.GET.get('next')
     if request.method == 'POST':
-        loading = True
-        print(loading)
         user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+        print(user)
         if user:
             login(request, user)
-            loading = False
-            return HttpResponseRedirect(request.POST.get('redirect'))
+            return HttpResponseRedirect('/chat/')
         else:
-            loading = False
-            return render(request, 'chat/login.html', {'wrongPassword': True, 'redirect': redirect})
-    return render(request, 'chat/login.html', {'redirect': redirect, 'loading': loading})
+            wrongPassword = True
+            return render(request, 'chat/login.html', {'wrongpassword': wrongPassword})
+    return render(request, 'chat/login.html')
 
 def signUpView(request):
     redirect = request.GET.get('next')

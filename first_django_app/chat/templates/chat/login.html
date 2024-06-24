@@ -3,23 +3,34 @@
   let loading = document.getElementById('p2');
 
   async function login() {
+    usernamefield.disabled = false;
+    loginButton.disabled = false;
     let fd = new FormData();
     let token = '{{ csrf_token }}';
     fd.append('username', usernamefield.value);
     fd.append('password', passwordfield.value);
     fd.append('csrfmiddlewaretoken', token);
 
+
     try {
-      loading.classList.add('displayNone');
-      await fetch('', {
+      usernamefield.disabled = true;
+      loginButton.disabled = true;
+      loading.classList.remove('displayNone');
+      let response = await fetch('', {
         method: 'POST',
         body: fd
       });
+      //console.log(response);
+      //let json = response.json();
+      //console.log(json);
       window.location.href = "http://127.0.0.1:8000/chat/";
-      loading.classList.remove('displayNone');   
-      console.log('Login successfull!');
+      loading.classList.add('displayNone');   
+      //console.log('Login successfull!');
     } catch(error) {
-      console.log(error);
+      //loginNotSuccessfull.classList.add('show');
+      //usernamefield.disabled = false;
+      //loginButton.disabled = false;
+      console.log('An error occured', error);
     }
   }
 </script>
@@ -28,8 +39,8 @@
     <div class="login">
         <h2>Login</h2>
 
-        {% if wrongPassword %}
-            <p>Username or password is incorrect!</p>
+        {% if wrongpassword %}
+          <p id="loginNotSuccessfull" class="notShow">Username or password is incorrect!</p>
         {% endif %}
 
         <form onsubmit="login(); return false;" class="loginForm">
@@ -37,8 +48,8 @@
 {% comment %}             {% csrf_token %}
  {% endcomment %}             
  
-            <input type="hidden" name="redirect" value="{{ redirect }}">
-
+{% comment %}             <input type="hidden" name="redirect" value="{{ redirect }}">
+ {% endcomment %}
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
               <input class="mdl-textfield__input" name="username" type="text" id="usernamefield" />
               <label class="mdl-textfield__label" for="sample3">Username</label>
@@ -50,7 +61,7 @@
             </div>
     
             <!-- Accent-colored raised button with ripple -->
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="loginButton">
               Login
             </button>
           </form>

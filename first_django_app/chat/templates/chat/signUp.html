@@ -1,30 +1,59 @@
 {% extends "base.html" %} {% block content %} 
+<script>
+  let loading = document.getElementById('p2');
+
+  async function login() {
+    let fd = new FormData();
+    let token = '{{ csrf_token }}';
+    fd.append('username', usernamefield.value);
+    fd.append('password', passwordfield.value);
+    fd.append('csrfmiddlewaretoken', token);
+
+    try {
+      loading.classList.add('displayNone');
+      await fetch('', {
+        method: 'POST',
+        body: fd
+      });
+      window.location.href = "http://127.0.0.1:8000/chat/";
+      loading.classList.remove('displayNone');   
+      console.log('Login successfull!');
+    } catch(error) {
+      console.log(error);
+    }
+  }
+</script>
 
 <div class="background">
     <div class="login">
         <h2>Sing up</h2>
 
-        <form action="/signUp/" method="POST" class="signUpForm">
-            {% csrf_token %}
-            {{ form }}
-            <input type="hidden" name="redirect" value="{{ redirect }}">
+        <form onsubmit="login(); return false;" class="signUpForm">
 
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" name="username" type="text" id="sample3" />
-              <label class="mdl-textfield__label" for="sample3">Username</label>
-            </div>
+          {% comment %}      {% csrf_token %}         {% endcomment %}             
+           
+          <input type="hidden" name="redirect" value="{{ redirect }}">
 
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" name="password" type="password" id="sample3" />
-                <label class="mdl-textfield__label" for="sample3">Password</label>
-            </div>
-    
-            <!-- Accent-colored raised button with ripple -->
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-              Sign Up
-            </button>
-          </form>
-    
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="username" type="text" id="usernamefield" />
+            <label class="mdl-textfield__label" for="sample3">Username</label>
+          </div>
+
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" name="password" type="password" id="passwordfield" />
+              <label class="mdl-textfield__label" for="sample3">Password</label>
+          </div>
+
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="passwordRepeat" type="password" id="passwordRepeat" />
+            <label class="mdl-textfield__label" for="sample3">Repeat password</label>
+        </div>
+  
+          <!-- Accent-colored raised button with ripple -->
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Login
+          </button>
+        </form>  
 
     </div>
 </div>
