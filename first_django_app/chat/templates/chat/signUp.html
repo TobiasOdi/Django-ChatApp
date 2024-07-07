@@ -3,10 +3,8 @@
   let loading = document.getElementById('p2');
 
   async function signUp() {
-    document.getElementById('usernamefield').disabled = true;
-    document.getElementById('passwordfield').disabled = true;
-    document.getElementById('passwordConfirmfield').disabled = true;
-    document.getElementById('signUpButton').disabled = true;
+    hideInfoText();
+    disableFields();
     let fd = new FormData();
     let token = '{{ csrf_token }}';
     fd.append('username', usernamefield.value);
@@ -27,32 +25,42 @@
           window.location.href = "http://127.0.0.1:8000/chat/";
           loading.classList.add('displayNone');
           userCreated.classList.remove('show');
-          document.getElementById('usernamefield').disabled = false;
-          document.getElementById('passwordfield').disabled = false;
-          document.getElementById('passwordConfirmfield').disabled = false;
-          document.getElementById('signUpButton').disabled = false;      
+          enableFields();
         }, 3000);
         console.log('User successfully created!');   
       } catch(error) {
-          console.log('An error occured', error);
           userAlreadyExists.classList.add('show');
           loading.classList.add('displayNone'); 
-          pwIdentical.classList.remove('show');
-          document.getElementById('usernamefield').disabled = false;
-          document.getElementById('passwordfield').disabled = false;
-          document.getElementById('passwordConfirmfield').disabled = false;
-          document.getElementById('signUpButton').disabled = false;
+          enableFields();
       }
     } else {
         pwIdentical.classList.add('show');
         passwordfield.value = "";
         passwordConfirmfield.value = "";
-        document.getElementById('usernamefield').disabled = false;
-        document.getElementById('passwordfield').disabled = false;
-        document.getElementById('passwordConfirmfield').disabled = false;
-        document.getElementById('signUpButton').disabled = false;      
+        enableFields();
     }
   }
+
+  function hideInfoText() {
+    pwIdentical.classList.remove('show');
+    userAlreadyExists.classList.remove('show');
+    userCreated.classList.remove('show');
+  }
+
+  function disableFields() {
+    document.getElementById('usernamefield').disabled = true;
+    document.getElementById('passwordfield').disabled = true;
+    document.getElementById('passwordConfirmfield').disabled = true;
+    document.getElementById('signUpButton').disabled = true;
+  }
+
+  function enableFields() {
+    document.getElementById('usernamefield').disabled = false;
+    document.getElementById('passwordfield').disabled = false;
+    document.getElementById('passwordConfirmfield').disabled = false;
+    document.getElementById('signUpButton').disabled = false;      
+  }
+
 </script>
 
 <div class="background">

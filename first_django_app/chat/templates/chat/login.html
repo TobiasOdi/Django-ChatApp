@@ -3,9 +3,7 @@
   let loading = document.getElementById('p2');
 
   async function login() {
-    document.getElementById('usernamefield').disabled = true;
-    document.getElementById('passwordfield').disabled = true;
-    document.getElementById('loginButton').disabled = true;
+    disableFields();
     let fd = new FormData();
     let token = '{{ csrf_token }}';
     fd.append('username', usernamefield.value);
@@ -26,19 +24,27 @@
         loading.classList.add('displayNone');
         console.log('Login successfull!');   
       }
-      document.getElementById('usernamefield').disabled = false;
-      document.getElementById('passwordfield').disabled = false;
-      document.getElementById('loginButton').disabled = false;
-  
+      enableFields();
+        
     } catch(error) {
       console.log('An error occured', error);
       loginNotSuccessfull.classList.add('show');
       loading.classList.add('displayNone');
-      document.getElementById('usernamefield').disabled = false;
-      document.getElementById('passwordfield').disabled = false;
-      document.getElementById('loginButton').disabled = false;  
+      enableFields();
     }
   }
+
+  function disableFields() {
+    document.getElementById('usernamefield').disabled = true;
+    document.getElementById('passwordfield').disabled = true;
+    document.getElementById('loginButton').disabled = true;
+  }
+
+  function enableFields() {
+    document.getElementById('usernamefield').disabled = false;
+    document.getElementById('passwordfield').disabled = false;
+    document.getElementById('loginButton').disabled = false;  
+}
 </script>
 
 <div class="background">
