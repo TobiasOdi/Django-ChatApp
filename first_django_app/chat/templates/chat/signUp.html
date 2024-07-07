@@ -2,60 +2,73 @@
 <script>
   let loading = document.getElementById('p2');
 
-  async function login() {
+  async function signUp() {
     let fd = new FormData();
     let token = '{{ csrf_token }}';
     fd.append('username', usernamefield.value);
     fd.append('password', passwordfield.value);
     fd.append('csrfmiddlewaretoken', token);
 
-    try {
-      loading.classList.add('displayNone');
-      await fetch('', {
-        method: 'POST',
-        body: fd
-      });
-      window.location.href = "http://127.0.0.1:8000/chat/";
-      loading.classList.remove('displayNone');   
-      console.log('Login successfull!');
-    } catch(error) {
-      console.log(error);
+    if(passwordfield.value == passwordConfirmfield.value) {
+      try {
+        loading.classList.remove('displayNone');
+        let response = await fetch('', {
+          method: 'POST',
+          body: fd
+        });
+        console.log(response);
+        let data = await response.json();
+        console.log(data);
+        let json = JSON.parse(data);
+        console.log(json);
+        window.location.href = "http://127.0.0.1:8000/chat/";
+        loading.classList.add('displayNone');  
+        console.log('User successfully created!');   
+      } catch(error) {
+          console.log('An error occured', error);
+          userAlreadyExists.classList.add('show');
+          loading.classList.add('displayNone'); 
+          pwIdentical.classList.remove('show');
+      }
+    } else {
+        pwIdentical.classList.add('show');
+        passwordfield.value = "";
+        passwordConfirmfield.value = "";
     }
   }
 </script>
 
 <div class="background">
-    <div class="login">
-        <h2>Sing up</h2>
+  <div class="login">
+    <h2>Sing up</h2>
+    <p id="userAlreadyExists" class="notShow">User already exists!</p>
+    <p id="pwIdentical" class="notShow">Passwords are not identical!</p>
+    <form onsubmit="signUp(); return false;" class="signUpForm">
 
-        <form onsubmit="login(); return false;" class="signUpForm">
+      {% comment %}      {% csrf_token %}         {% endcomment %}              
+      {% comment %} <input type="hidden" name="redirect" value="{{ redirect }}"> {% endcomment %}
+        
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" name="username" type="text" id="usernamefield" />
+        <label class="mdl-textfield__label" for="sample3">Username</label>
+      </div>
 
-          {% comment %}      {% csrf_token %}         {% endcomment %}             
-           
-          <input type="hidden" name="redirect" value="{{ redirect }}">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" name="password" type="password" id="passwordfield" />
+          <label class="mdl-textfield__label" for="sample3">Password</label>
+      </div>
 
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="username" type="text" id="usernamefield" />
-            <label class="mdl-textfield__label" for="sample3">Username</label>
-          </div>
-
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" name="password" type="password" id="passwordfield" />
-              <label class="mdl-textfield__label" for="sample3">Password</label>
-          </div>
-
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" name="passwordRepeat" type="password" id="passwordRepeat" />
-            <label class="mdl-textfield__label" for="sample3">Repeat password</label>
-        </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" name="passwordConfirm" type="password" id="passwordConfirmfield" />
+        <label class="mdl-textfield__label" for="sample3">Repeat password</label>
+      </div>
   
-          <!-- Accent-colored raised button with ripple -->
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-            Login
-          </button>
-        </form>  
-
-    </div>
+      <!-- Accent-colored raised button with ripple -->
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="signUpButton">
+        Login
+      </button>
+    </form>  
+  </div>
 </div>
 
 {% endblock %}
